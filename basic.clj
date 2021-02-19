@@ -661,6 +661,32 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn palabra-reservada? [x]
+  (contains?
+    #{
+      ;; Comandos de Apple DOS 3.3
+      'LOAD 'SAVE
+
+      ;; Sentencias de Applesoft BASIC
+      'INPUT 'PRINT '?
+      'DATA 'READ 'REM 'RESTORE
+      'CLEAR 'LET/= 'LIST 'NEW 'RUN
+      'END 'FOR/TO/NEXT/STEP 'GOSUB/RETURN 'GOTO 'IF/GOTO 'IF/THEN 'ON/GOSUB/RETURN 'ON/GOTO
+
+      ;; Sentencias del intérprete
+      'ENV 'EXIT
+
+      ;; Funciones de Applesoft BASIC
+      'ATN 'INT 'SIN
+      'LEN 'MID$
+      'ASC 'CHR$ 'STR$
+
+      ;; Operadores de Applesoft BASIC
+      '+ '- '* '/ (symbol "^")
+      '= '<> '< '<= '> '>=
+      'AND 'OR
+    }
+    x
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -674,7 +700,10 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn operador? [x]
-  (contains? #{'+ '- '* '/ (symbol "^") '= '<> '< '<= '> '>= 'AND 'OR} x)
+  (contains?
+    #{'+ '- '* '/ (symbol "^") '= '<> '< '<= '> '>= 'AND 'OR}
+    x
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
