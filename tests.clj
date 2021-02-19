@@ -1,6 +1,10 @@
 (require '[clojure.test :refer [is deftest run-tests]])
 
-(load-file "basic-a-completar.clj")
+(load-file "basic.clj")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                        TESTS UNITARIOS                         ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftest test-palabra-reservada?
    (is (= true (palabra-reservada? 'REM)))
@@ -12,6 +16,12 @@
    (is (= true (operador? (symbol "+"))))
    (is (= false (operador? (symbol "%"))))
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                      TESTS DE INTEGRACIÓN                      ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (run-tests)
   
