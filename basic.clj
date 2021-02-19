@@ -670,7 +670,7 @@
       'INPUT 'PRINT '?
       'DATA 'READ 'REM 'RESTORE
       'CLEAR 'LET/= 'LIST 'NEW 'RUN
-      'END 'FOR/TO/NEXT/STEP 'GOSUB/RETURN 'GOTO 'IF/GOTO 'IF/THEN 'ON/GOSUB/RETURN 'ON/GOTO
+      'END 'FOR 'TO 'NEXT 'STEP 'GOSUB 'RETURN 'GOTO 'IF 'THEN 'ON
 
       ;; Sentencias del intérprete
       'ENV 'EXIT
