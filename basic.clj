@@ -32,13 +32,13 @@
 (declare palabra-reservada?)              ; DONE
 (declare operador?)                       ; DONE
 (declare anular-invalidos)                ; DONE
-(declare cargar-linea)                    ; IMPLEMENTAR
-(declare expandir-nexts)                  ; IMPLEMENTAR
+(declare cargar-linea)                    ; DONE
+(declare expandir-nexts)                  ; IN PROGRESS
 (declare dar-error)                       ; IMPLEMENTAR
-(declare variable-float?)                 ; IMPLEMENTAR
-(declare variable-integer?)               ; IMPLEMENTAR
-(declare variable-string?)                ; IMPLEMENTAR
-(declare contar-sentencias)               ; IMPLEMENTAR
+(declare variable-float?)                 ; DONE
+(declare variable-integer?)               ; DONE
+(declare variable-string?)                ; DONE
+(declare contar-sentencias)               ; IN PROGRESS
 (declare buscar-lineas-restantes)         ; IMPLEMENTAR
 (declare continuar-linea)                 ; IMPLEMENTAR
 (declare extraer-data)                    ; IMPLEMENTAR
@@ -734,7 +734,19 @@
 ; user=> (cargar-linea '(15 (X = X - 1)) ['((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
 ; [((10 (PRINT X)) (15 (X = X - 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn agregar-sentencia [sentencia sentencias]
+  (if (empty? sentencias)
+    (list sentencia)
+    (cond
+      (< (first sentencia) (first (first sentencias))) (cons sentencia sentencias)
+      (> (first sentencia) (first (first sentencias))) (cons (first sentencias) (agregar-sentencia sentencia (rest sentencias)))
+      :else (cons sentencia (rest sentencias))
+    )
+  )
+)
+
 (defn cargar-linea [linea amb]
+  (assoc amb 0 (agregar-sentencia linea (first amb)))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -827,7 +839,16 @@
 ; user=> (contar-sentencias 20 [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
 ; 2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn contar-sentencias-aux [nro-linea lineas]
+  ;; FALTA EXTENDER LOS NEXTS
+  (if (= nro-linea (first (first lineas)))
+    (count (rest (first lineas)))
+    (contar-sentencias-aux nro-linea (rest lineas))
+  )
+)
+
 (defn contar-sentencias [nro-linea amb]
+  (contar-sentencias-aux nro-linea (first amb))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
