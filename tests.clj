@@ -9,7 +9,7 @@
 (deftest test-palabra-reservada?
    ;; Son palabras reservadas
    (is (= true (palabra-reservada? 'REM)))
-   (is (= true (palabra-reservada? 'LET/=)))
+   (is (= true (palabra-reservada? 'LET)))
    (is (= true (palabra-reservada? 'LIST)))
    (is (= true (palabra-reservada? 'FOR)))
    (is (= true (palabra-reservada? 'NEXT)))
@@ -50,12 +50,12 @@
    (is (= false (operador? 'NOR)))
 )
 
-;; (deftest test-anular-invalidos
-;;    (is (=
-;;       (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0))
-;;       '(IF X nil * Y < 12 THEN LET nil X = 0)
-;;    ))
-;; )
+(deftest test-anular-invalidos
+   (is (=
+      (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0))
+      '(IF X nil * Y < 12 THEN LET nil X = 0)
+   ))
+)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

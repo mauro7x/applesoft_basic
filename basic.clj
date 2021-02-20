@@ -669,7 +669,7 @@
       ;; Sentencias de Applesoft BASIC
       'INPUT 'PRINT '?
       'DATA 'READ 'REM 'RESTORE
-      'CLEAR 'LET/= 'LIST 'NEW 'RUN
+      'CLEAR 'LET 'LIST 'NEW 'RUN
       'END 'FOR 'TO 'NEXT 'STEP 'GOSUB 'RETURN 'GOTO 'IF 'THEN 'ON
 
       ;; Sentencias del intérprete
@@ -713,6 +713,13 @@
 ; (IF X nil * Y < 12 THEN LET nil X = 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn anular-invalidos [sentencia]
+  (if (empty? sentencia)
+    '()
+    (if (contains? #{'! (symbol "@") (symbol "#") '$ '% '& (symbol "~") (symbol "`") } (first sentencia))   
+      (cons nil (anular-invalidos (rest sentencia)))
+      (cons (first sentencia) (anular-invalidos (rest sentencia)))
+    ) 
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
