@@ -29,9 +29,9 @@
 (declare evaluar)                         ; COMPLETAR
 (declare aplicar)                         ; COMPLETAR
 
-(declare palabra-reservada?)              ; IMPLEMENTAR
-(declare operador?)                       ; IMPLEMENTAR
-(declare anular-invalidos)                ; IMPLEMENTAR
+(declare palabra-reservada?)              ; DONE
+(declare operador?)                       ; DONE
+(declare anular-invalidos)                ; DONE
 (declare cargar-linea)                    ; IMPLEMENTAR
 (declare expandir-nexts)                  ; IMPLEMENTAR
 (declare dar-error)                       ; IMPLEMENTAR
@@ -782,6 +782,10 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-float? [x]
+  (not (or
+    (= (symbol (str (last (str x)))) '%)
+    (= (symbol (str (last (str x)))) '$)
+  ))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -795,6 +799,7 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-integer? [x]
+  (= (symbol (str (last (str x)))) '%)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -808,6 +813,7 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-string? [x]
+  (= (symbol (str (last (str x)))) '$)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

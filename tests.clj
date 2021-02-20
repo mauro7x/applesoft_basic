@@ -57,6 +57,42 @@
    ))
 )
 
+;; (deftest test-cargar-linea
+;;    (is (=
+;;       (cargar-linea '(10 (PRINT X)) [() [:ejecucion-inmediata 0] [] [] [] 0 {}])
+;;       '[((10 (PRINT X))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
+;;    ))
+;;    (is (=
+;;       (cargar-linea '(20 (X = 100)) ['((10 (PRINT X))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
+;;       '[((10 (PRINT X)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
+;;    ))
+;;    (is (=
+;;       (cargar-linea '(15 (X = X + 1)) ['((10 (PRINT X)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
+;;       '[((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
+;;    ))
+;;    (is (=
+;;       (cargar-linea '(15 (X = X - 1)) ['((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
+;;       '[((10 (PRINT X)) (15 (X = X - 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
+;;    ))
+;; )
+
+(deftest test-variable-float?
+   (is (= false (variable-float? 'X$)))
+   (is (= true (variable-float? 'X)))
+   (is (= false (variable-float? 'X%)))
+)
+
+(deftest test-variable-integer?
+   (is (= false (variable-integer? 'X$)))
+   (is (= false (variable-integer? 'X)))
+   (is (= true (variable-integer? 'X%)))
+)
+
+(deftest test-variable-string?
+   (is (= true (variable-string? 'X$)))
+   (is (= false (variable-string? 'X)))
+   (is (= false (variable-string? 'X%)))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;                      TESTS DE INTEGRACIÓN                      ;
