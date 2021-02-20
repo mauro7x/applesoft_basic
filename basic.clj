@@ -38,7 +38,7 @@
 (declare variable-float?)                 ; DONE
 (declare variable-integer?)               ; DONE
 (declare variable-string?)                ; DONE
-(declare contar-sentencias)               ; IN PROGRESS
+(declare contar-sentencias)               ; DONE
 (declare buscar-lineas-restantes)         ; IMPLEMENTAR
 (declare continuar-linea)                 ; IMPLEMENTAR
 (declare extraer-data)                    ; IMPLEMENTAR
@@ -864,9 +864,8 @@
 ; 2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn contar-sentencias-aux [nro-linea lineas]
-  ;; FALTA EXTENDER LOS NEXTS
   (if (= nro-linea (first (first lineas)))
-    (count (rest (first lineas)))
+    (count (expandir-nexts (rest (first lineas))))
     (contar-sentencias-aux nro-linea (rest lineas))
   )
 )
