@@ -33,7 +33,7 @@
 (declare operador?)                       ; DONE
 (declare anular-invalidos)                ; DONE
 (declare cargar-linea)                    ; DONE
-(declare expandir-nexts)                  ; IN PROGRESS
+(declare expandir-nexts)                  ; DONE
 (declare dar-error)                       ; IMPLEMENTAR
 (declare variable-float?)                 ; DONE
 (declare variable-integer?)               ; DONE
@@ -760,7 +760,31 @@
 ; user=> (expandir-nexts n)
 ; ((PRINT 1) (NEXT A) (NEXT B))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn expandir-nexts [n]
+(defn expandir-next-aux [parameters]
+  (if (empty? parameters)
+    '()
+    (if (= (symbol ",") (first parameters))
+      (expandir-next-aux (rest parameters))
+      (cons (list 'NEXT (first parameters)) (expandir-next-aux (rest parameters)))
+    )
+  )
+)
+
+(defn expandir-next [next-compuesto]
+  (if (empty? (rest next-compuesto))
+    (list next-compuesto)
+    (expandir-next-aux (rest next-compuesto))
+  )
+)
+
+(defn expandir-nexts [sentencias]
+  (if (empty? sentencias)
+    sentencias
+    (if (= 'NEXT (first (first sentencias)))
+      (concat (expandir-next (first sentencias)) (expandir-nexts (rest sentencias)))
+      (cons (first sentencias) (expandir-nexts (rest sentencias)))
+    )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

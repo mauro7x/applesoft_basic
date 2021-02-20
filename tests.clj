@@ -76,6 +76,37 @@
    ))
 )
 
+(deftest test-expandir-nexts
+   (is (=
+      (expandir-nexts (list '(PRINT 1) (list 'NEXT 'A (symbol ",") 'B)))
+      '((PRINT 1) (NEXT A) (NEXT B))
+   ))
+   (is (=
+      (expandir-nexts (list '(PRINT 1) '(PRINT 2) '(PRINT 3)))
+      '((PRINT 1) (PRINT 2) (PRINT 3))
+   ))
+   (is (=
+      (expandir-nexts (list '(PRINT 1) '(NEXT A , B , C) '(PRINT 3)))
+      '((PRINT 1) (NEXT A) (NEXT B) (NEXT C) (PRINT 3))
+   ))
+   (is (=
+      (expandir-nexts (list '(PRINT 1) '(NEXT A , B , C)))
+      '((PRINT 1) (NEXT A) (NEXT B) (NEXT C))
+   ))
+   (is (=
+      (expandir-nexts (list '(NEXT A , B , C) '(PRINT 1)))
+      '((NEXT A) (NEXT B) (NEXT C) (PRINT 1))
+   ))
+   (is (=
+      (expandir-nexts (list '(NEXT A , B , C)))
+      '((NEXT A) (NEXT B) (NEXT C))
+   ))
+   (is (=
+      (expandir-nexts (list '(NEXT A)))
+      '((NEXT A))
+   ))
+)
+
 (deftest test-variable-float?
    (is (= false (variable-float? 'X$)))
    (is (= true (variable-float? 'X)))
