@@ -34,7 +34,7 @@
 (declare anular-invalidos)                ; DONE
 (declare cargar-linea)                    ; DONE
 (declare expandir-nexts)                  ; DONE
-(declare dar-error)                       ; IMPLEMENTAR
+(declare dar-error)                       ; DONE, NOT TESTED
 (declare variable-float?)                 ; DONE
 (declare variable-integer?)               ; DONE
 (declare variable-string?)                ; DONE
@@ -804,7 +804,18 @@
 ;
 ; ?ERROR DISK FULL IN 100nil
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn dar-error-aux [msg prog-ptrs]
+  (if (integer? (first prog-ptrs))
+    (print (apply str (concat "\n" msg " IN " (str (first prog-ptrs)))))
+    (print (apply str (concat "\n" msg)))
+  )
+)
+
 (defn dar-error [cod prog-ptrs]
+  (if (integer? cod)
+    (dar-error-aux (buscar-mensaje cod) prog-ptrs)
+    (dar-error-aux cod prog-ptrs)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

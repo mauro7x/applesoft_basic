@@ -107,6 +107,26 @@
    ))
 )
 
+
+; dar-error: recibe un error (codigo o mensaje) y el puntero de 
+; programa, muestra el error correspondiente y retorna nil, por
+; ejemplo:
+; user=> (dar-error 16 [:ejecucion-inmediata 4])
+;
+; ?SYNTAX ERRORnil
+; user=> (dar-error "?ERROR DISK FULL" [:ejecucion-inmediata 4])
+;
+; ?ERROR DISK FULLnil
+; user=> (dar-error 16 [100 3])
+;
+; ?SYNTAX ERROR IN 100nil
+; user=> (dar-error "?ERROR DISK FULL" [100 3])
+;
+; ?ERROR DISK FULL IN 100nil
+(deftest test-dar-error
+   ;; Cómo testeamos input?
+)
+
 (deftest test-variable-float?
    (is (= false (variable-float? 'X$)))
    (is (= true (variable-float? 'X)))
