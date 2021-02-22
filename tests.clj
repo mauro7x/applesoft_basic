@@ -246,6 +246,25 @@
    ))
 )
 
+(deftest test-desambiguar
+   (is (=
+      (desambiguar (list '- 2 '* (symbol "(") '- 3 '+ 5 '- (symbol "(") '+ 2 '/ 7 (symbol ")") (symbol ")")))
+      (list (symbol "-u") 2 '* (symbol "(") (symbol "-u") 3 '+ 5 '- (symbol "(") 2 '/ 7 (symbol ")") (symbol ")"))
+   ))
+   (is (=
+      (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")")))
+      (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")"))
+   ))
+   (is (=
+      (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")")))
+      (list 'MID3$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")"))
+   ))
+   (is (=
+      (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
+      (list 'MID3$ (symbol "(") 1 (symbol ",") (symbol "-u") 2 '+ 'K (symbol ",") 3 (symbol ")"))
+   ))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;                       TESTS IN PROGRESS                        ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -267,25 +286,6 @@
    ;; (is (=
    ;;    (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
    ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X$ "HOLA MUNDO"}] 
-   ;; ))
-)
-
-(deftest test-desambiguar
-   ;; (is (=
-   ;;    (desambiguar (list '- 2 '* (symbol "(") '- 3 '+ 5 '- (symbol "(") '+ 2 '/ 7 (symbol ")") (symbol ")")))
-   ;;    (list (symbol "-u") 2 '* (symbol "(") (symbol "-u") 3 '+ 5 '- (symbol "(") 2 '/ 7 (symbol ")") (symbol ")"))
-   ;; ))
-   ;; (is (=
-   ;;    (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")")))
-   ;;    (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")"))
-   ;; ))
-   ;; (is (=
-   ;;    (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")")))
-   ;;    (list 'MID3$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")"))
-   ;; ))
-   ;; (is (=
-   ;;    (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
-   ;;    (list 'MID3$ (symbol "(") 1 (symbol ",") (symbol "-u") 2 '+ 'K (symbol ",") 3 (symbol ")"))
    ;; ))
 )
 

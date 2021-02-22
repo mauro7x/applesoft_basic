@@ -44,7 +44,7 @@
 (declare extraer-data)                    ; DONE
 (declare ejecutar-asignacion)             ; DONE, TEST INACTIVE
 (declare preprocesar-expresion)           ; DONE
-(declare desambiguar)                     ; IMPLEMENTAR
+(declare desambiguar)                     ; DONE
 (declare precedencia)                     ; IMPLEMENTAR
 (declare aridad)                          ; IMPLEMENTAR
 (declare eliminar-cero-decimal)           ; DONE
@@ -839,10 +839,13 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-float? [x]
-  (not (or
-    (= (symbol (str (last (str x)))) '%)
-    (= (symbol (str (last (str x)))) '$)
-  ))
+  (if (or (palabra-reservada? x) (not (symbol? x)))
+    false
+    (not (or
+      (= (symbol (str (last (str x)))) '%)
+      (= (symbol (str (last (str x)))) '$)
+    ))
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -856,7 +859,10 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-integer? [x]
-  (= (symbol (str (last (str x)))) '%)
+  (if (or (palabra-reservada? x) (not (symbol? x)))
+    false
+    (= (symbol (str (last (str x)))) '%)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -870,7 +876,10 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-string? [x]
-  (= (symbol (str (last (str x)))) '$)
+  (if (or (palabra-reservada? x) (not (symbol? x)))
+    false
+    (= (symbol (str (last (str x)))) '$)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1043,11 +1052,10 @@
   (let [x (first expr)] (cond
     (empty? expr) '()
     (= x '.) (cons 0 (preprocesar-expresion (rest expr) amb))
-    (or (not (symbol? x)) (palabra-reservada? x)) (cons x (preprocesar-expresion (rest expr) amb))
     (contains? (amb 6) x) (cons ((amb 6) x) (preprocesar-expresion (rest expr) amb))
     (or (variable-float? x) (variable-integer? x)) (cons 0 (preprocesar-expresion (rest expr) amb))
     (variable-string? x) (cons "" (preprocesar-expresion (rest expr) amb))
-    :else(cons 'UNKNOWN_SYMBOL (preprocesar-expresion (rest expr) amb))
+    :else(cons x (preprocesar-expresion (rest expr) amb))
   ))
 )
 
@@ -1064,7 +1072,39 @@
 ; user=> (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
 ; (MID3$ ( 1 , -u 2 + K , 3 ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn mid-ternario? [expr n_params]
+  ; ej: (( 1 , 2 )) ===> false
+  ; ej: (( 1 , 2 , 3 )) ===> true
+  (let [x (first expr)] (cond
+    (= n_params 3) true
+    (= x (symbol ")")) false
+    (contains? #{(symbol "(") (symbol ",")} x) (mid-ternario? (rest expr) n_params)
+    :else(mid-ternario? (rest expr) (+ n_params 1))
+  ))
+)
+
+(defn prox-operador-binario? [v1 v2]
+  ; ej: 4 + ===> true
+  ; ej: ( + ===> false
+  (not (or
+    (not (contains? #{'+ '-} v2))
+    (palabra-reservada? v1)
+    (contains? #{(symbol "(") (symbol ")") (symbol ",")} v1)
+  ))
+)
+
 (defn desambiguar [expr]
+  (let [v1 (first expr) v2 (first (rest expr))] (cond
+    (empty? expr) '()
+    (= v1 '-) (cons (symbol "-u") (desambiguar (rest expr)))
+    (= v1 '+) (desambiguar (rest expr))
+    (= v1 'MID$) (if (mid-ternario? (rest expr) 0)
+                    (cons 'MID3$ (desambiguar (rest expr)))
+                    (cons 'MID$ (desambiguar (rest expr)))
+                 )
+    (prox-operador-binario? v1 v2) (concat (list v1 v2) (desambiguar (rest (rest expr))))
+    :else(cons v1 (desambiguar (rest expr)))
+  ))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
