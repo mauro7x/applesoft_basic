@@ -39,7 +39,7 @@
 (declare variable-integer?)               ; DONE
 (declare variable-string?)                ; DONE
 (declare contar-sentencias)               ; DONE
-(declare buscar-lineas-restantes)         ; IMPLEMENTAR
+(declare buscar-lineas-restantes)         ; DONE
 (declare continuar-linea)                 ; IMPLEMENTAR
 (declare extraer-data)                    ; IMPLEMENTAR
 (declare ejecutar-asignacion)             ; IMPLEMENTAR
@@ -917,15 +917,31 @@
 ; user=> (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [25 0] [] [] [] 0 {}])
 ; nil
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn buscar-lineas-restantes-aux [prg linea n]
+  (if (empty? prg)
+    nil
+    (if (= linea (first (first prg)))
+      (cons
+        (cons linea (take-last n (expandir-nexts (rest (first prg))))) 
+        (rest prg)
+      )
+      (buscar-lineas-restantes-aux (rest prg) linea n)
+    )
+  )
+)
+
 (defn buscar-lineas-restantes
   ([amb] (buscar-lineas-restantes (amb 1) (amb 0)))
   ([act prg]
+    (if (integer? (act 0))
+      (buscar-lineas-restantes-aux prg (act 0) (act 1))
+      nil ;; Ojo con esto, chequear.
     )
+  )
 )
 
-;[(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 2] [] [] [] 0 {}])
-; ((10 (PRINT X) (PRINT Y)) (15 (X = X + 1)) (20 (NEXT I , J)))
-
+   ;; [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}]
+   ;; (list '(10 (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; continuar-linea: implementa la sentencia RETURN, retornando una
