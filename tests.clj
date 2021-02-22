@@ -298,10 +298,11 @@
 )
 
 (deftest test-eliminar-cero-decimal
-   ;; (is (= (eliminar-cero-decimal 1.5) 1.5))
-   ;; (is (= (eliminar-cero-decimal 1.50) 1.5))
-   ;; (is (= (eliminar-cero-decimal 1.0) 1))
-   ;; (is (= (eliminar-cero-decimal 'A) 'A))
+   (is (= (eliminar-cero-decimal 1.5) 1.5))
+   (is (= (eliminar-cero-decimal 1.50) 1.5))
+   (is (= (eliminar-cero-decimal 1.50000000000) 1.5))
+   (is (= (eliminar-cero-decimal 1.0) 1))
+   (is (= (eliminar-cero-decimal 'A) 'A))
 )
 
 (deftest test-eliminar-cero-entero

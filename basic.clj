@@ -47,7 +47,7 @@
 (declare desambiguar)                     ; IMPLEMENTAR
 (declare precedencia)                     ; IMPLEMENTAR
 (declare aridad)                          ; IMPLEMENTAR
-(declare eliminar-cero-decimal)           ; IMPLEMENTAR
+(declare eliminar-cero-decimal)           ; DONE
 (declare eliminar-cero-entero)            ; DONE
 
 ; (*) Comentarios agregados, por ej. que haya tenido que asumir algo.
@@ -1072,6 +1072,13 @@
 ; A
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn eliminar-cero-decimal [n]
+  (if (number? n)
+    (if (= (float (- n (int n))) 0.0)
+      (int n)
+      n
+    )
+    n
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
