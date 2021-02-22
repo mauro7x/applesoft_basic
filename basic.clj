@@ -930,18 +930,19 @@
   )
 )
 
+(defn buscar-lineas-restantes-inm-aux [prg n]
+  nil ;; TODO: VER COMO FUNCIONA
+)
+
 (defn buscar-lineas-restantes
   ([amb] (buscar-lineas-restantes (amb 1) (amb 0)))
   ([act prg]
     (if (integer? (act 0))
       (buscar-lineas-restantes-aux prg (act 0) (act 1))
-      nil ;; Ojo con esto, chequear.
+      (buscar-lineas-restantes-inm-aux prg (act 1))
     )
   )
 )
-
-   ;; [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}]
-   ;; (list '(10 (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; continuar-linea: implementa la sentencia RETURN, retornando una
@@ -955,6 +956,7 @@
 ; [:omitir-restante [((10 (PRINT X)) (15 (GOSUB 100) (X = X + 1)) (20 (NEXT I , J))) [15 1] [] [] [] 0 {}]]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn continuar-linea [amb]
+
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

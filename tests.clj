@@ -159,6 +159,11 @@
       (buscar-lineas-restantes ['((PRINT X) (PRINT Y)) [:ejecucion-inmediata 2] [] [] [] 0 {}])
       nil
    ))
+   ;; NO SÉ SI ESTA ES LA IDEA
+   ;; (is (=
+   ;;    (buscar-lineas-restantes ['((PRINT X) (PRINT Y)) [:ejecucion-inmediata 1] [] [] [] 0 {}])
+   ;;    ((PRINT Y))
+   ;; ))
    (is (=
       (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 2] [] [] [] 0 {}])
       (list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J)))
