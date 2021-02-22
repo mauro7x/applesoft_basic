@@ -39,7 +39,7 @@
 (declare variable-integer?)               ; DONE
 (declare variable-string?)                ; DONE
 (declare contar-sentencias)               ; DONE
-(declare buscar-lineas-restantes)         ; HALF-DONE, TODO
+(declare buscar-lineas-restantes)         ; DONE (*)
 (declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
 (declare extraer-data)                    ; IMPLEMENTAR
 (declare ejecutar-asignacion)             ; IMPLEMENTAR
@@ -49,6 +49,8 @@
 (declare aridad)                          ; IMPLEMENTAR
 (declare eliminar-cero-decimal)           ; IMPLEMENTAR
 (declare eliminar-cero-entero)            ; IMPLEMENTAR
+
+; (*) Comentarios agregados, por ej. que haya tenido que asumir algo.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; driver-loop: el REPL del interprete de Applesoft BASIC
@@ -930,16 +932,12 @@
   )
 )
 
-(defn buscar-lineas-restantes-inm-aux [prg n]
-  nil ;; TODO: VER COMO FUNCIONA
-)
-
 (defn buscar-lineas-restantes
   ([amb] (buscar-lineas-restantes (amb 1) (amb 0)))
   ([act prg]
     (if (integer? (act 0))
       (buscar-lineas-restantes-aux prg (act 0) (act 1))
-      (buscar-lineas-restantes-inm-aux prg (act 1))
+      nil ;; Esto lo deduje de los casos de uso, no tiene lógica sino el segundo caso de uso
     )
   )
 )
