@@ -39,8 +39,8 @@
 (declare variable-integer?)               ; DONE
 (declare variable-string?)                ; DONE
 (declare contar-sentencias)               ; DONE
-(declare buscar-lineas-restantes)         ; DONE
-(declare continuar-linea)                 ; IMPLEMENTAR
+(declare buscar-lineas-restantes)         ; HALF-DONE, TODO
+(declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
 (declare extraer-data)                    ; IMPLEMENTAR
 (declare ejecutar-asignacion)             ; IMPLEMENTAR
 (declare preprocesar-expresion)           ; IMPLEMENTAR
@@ -955,8 +955,12 @@
 ; user=> (continuar-linea [(list '(10 (PRINT X)) '(15 (GOSUB 100) (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [[15 2]] [] [] 0 {}])
 ; [:omitir-restante [((10 (PRINT X)) (15 (GOSUB 100) (X = X + 1)) (20 (NEXT I , J))) [15 1] [] [] [] 0 {}]]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn continuar-linea [amb]
 
+(defn continuar-linea [amb]
+  (if (empty? (amb 2))
+    [(dar-error 22 (amb 1)) amb]
+    [:omitir-restante [(amb 0) (assoc ((amb 2) 0) 1 (- (((amb 2) 0) 1) 1)) (into [] (rest (amb 2))) (amb 3) (amb 4) (amb 5) (amb 6)]]
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
