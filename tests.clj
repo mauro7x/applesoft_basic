@@ -233,6 +233,19 @@
    ))
 )
 
+;; acá va test-ejecutar-asignacion
+
+(deftest test-preprocesar-expresion
+   (is (=
+      (preprocesar-expresion '(X$ + " MUNDO" + Z$) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+      '("HOLA" + " MUNDO" + "")
+   ))
+   (is (=
+      (preprocesar-expresion '(X + . / Y% * Z) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 5 Y% 2}])
+      '(5 + 0 / 2 * 0)
+   ))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;                       TESTS IN PROGRESS                        ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -257,22 +270,6 @@
    ;; ))
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;                        REMAINING TESTS                         ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-(deftest test-preprocesar-expresion
-   ; preprocesar-expresion: recibe una expresion y la retorna con
-   ; las variables reemplazadas por sus valores y el punto por el
-   ; cero, por ejemplo:
-   ; user=> (preprocesar-expresion '(X$ + " MUNDO" + Z$) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
-   ; ("HOLA" + " MUNDO" + "")
-   ; user=> (preprocesar-expresion '(X + . / Y% * Z) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 5 Y% 2}])
-   ; (5 + 0 / 2 * 0)
-)
-
 (deftest test-desambiguar
    ; desambiguar: recibe un expresion y la retorna sin los + unarios,
    ; con los - unarios reemplazados por -u y los MID$ ternarios
@@ -286,6 +283,10 @@
    ; user=> (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
    ; (MID3$ ( 1 , -u 2 + K , 3 ))
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                        REMAINING TESTS                         ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftest test-precedencia
    ;; (is (= (precedencia 'OR) 1))

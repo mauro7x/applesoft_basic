@@ -43,7 +43,7 @@
 (declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
 (declare extraer-data)                    ; DONE
 (declare ejecutar-asignacion)             ; DONE, TEST INACTIVE
-(declare preprocesar-expresion)           ; IMPLEMENTAR
+(declare preprocesar-expresion)           ; DONE
 (declare desambiguar)                     ; IMPLEMENTAR
 (declare precedencia)                     ; IMPLEMENTAR
 (declare aridad)                          ; IMPLEMENTAR
@@ -1040,6 +1040,15 @@
 ; (5 + 0 / 2 * 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn preprocesar-expresion [expr amb]
+  (let [x (first expr)] (cond
+    (empty? expr) '()
+    (= x '.) (cons 0 (preprocesar-expresion (rest expr) amb))
+    (or (not (symbol? x)) (palabra-reservada? x)) (cons x (preprocesar-expresion (rest expr) amb))
+    (contains? (amb 6) x) (cons ((amb 6) x) (preprocesar-expresion (rest expr) amb))
+    (or (variable-float? x) (variable-integer? x)) (cons 0 (preprocesar-expresion (rest expr) amb))
+    (variable-string? x) (cons "" (preprocesar-expresion (rest expr) amb))
+    :else(cons 'UNKNOWN_SYMBOL (preprocesar-expresion (rest expr) amb))
+  ))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
