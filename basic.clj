@@ -42,7 +42,7 @@
 (declare buscar-lineas-restantes)         ; DONE (*)
 (declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
 (declare extraer-data)                    ; DONE
-(declare ejecutar-asignacion)             ; IMPLEMENTAR
+(declare ejecutar-asignacion)             ; DONE, TEST INACTIVE
 (declare preprocesar-expresion)           ; IMPLEMENTAR
 (declare desambiguar)                     ; IMPLEMENTAR
 (declare precedencia)                     ; IMPLEMENTAR
@@ -1021,7 +1021,13 @@
 ; user=> (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
 ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn ejecutar-asignacion [sentencia amb]
+  (assoc amb 6
+    (assoc (amb 6) (first sentencia)
+      (calcular-expresion (drop 2 sentencia) amb)
+    )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

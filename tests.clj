@@ -237,26 +237,31 @@
 ;                       TESTS IN PROGRESS                        ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+;; Esperando por correlativas...
+(deftest test-ejecutar-asignacion
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
+   ;; ))
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
+   ;; ))
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 3}] 
+   ;; ))
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X$ "HOLA MUNDO"}] 
+   ;; ))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;                        REMAINING TESTS                         ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(deftest test-ejecutar-asignacion
-   ; ejecutar-asignacion: recibe una asignacion y un ambiente, y
-   ; retorna el ambiente actualizado al efectuar la asignacion, por
-   ; ejemplo:
-   ; user=> (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
-   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]
-   ; user=> (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]
-   ; user=> (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 3}]
-   ; user=> (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
-   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}]
-)
 
 (deftest test-preprocesar-expresion
    ; preprocesar-expresion: recibe una expresion y la retorna con
