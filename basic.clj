@@ -48,9 +48,17 @@
 (declare precedencia)                     ; IMPLEMENTAR
 (declare aridad)                          ; IMPLEMENTAR
 (declare eliminar-cero-decimal)           ; IMPLEMENTAR
-(declare eliminar-cero-entero)            ; IMPLEMENTAR
+(declare eliminar-cero-entero)            ; DONE
 
 ; (*) Comentarios agregados, por ej. que haya tenido que asumir algo.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                     FUNCIONES AUXILIARES                     ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn abs [n]
+  (max n (- n))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; driver-loop: el REPL del interprete de Applesoft BASIC
@@ -1090,6 +1098,15 @@
 ; "-.5"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn eliminar-cero-entero [n]
+  (cond
+    (= nil n) nil
+    (number? n) (cond
+                  (and (> n 0) (< n 1)) (apply str (rest (str n)))
+                  (and (< n 0) (> n -1)) (apply str (concat "-" (rest (rest (str n)))))
+                  :else(str n)
+                )
+    :else(str n)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

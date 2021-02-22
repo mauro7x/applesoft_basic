@@ -257,7 +257,7 @@
    ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}]
 )
 
-(deftest preprocesar-expresion
+(deftest test-preprocesar-expresion
    ; preprocesar-expresion: recibe una expresion y la retorna con
    ; las variables reemplazadas por sus valores y el punto por el
    ; cero, por ejemplo:
@@ -267,7 +267,7 @@
    ; (5 + 0 / 2 * 0)
 )
 
-(deftest desambiguar
+(deftest test-desambiguar
    ; desambiguar: recibe un expresion y la retorna sin los + unarios,
    ; con los - unarios reemplazados por -u y los MID$ ternarios
    ; reemplazados por MID3$, por ejemplo: 
@@ -281,7 +281,7 @@
    ; (MID3$ ( 1 , -u 2 + K , 3 ))
 )
 
-(deftest precedencia
+(deftest test-precedencia
    ;; (is (= (precedencia 'OR) 1))
    ;; (is (= (precedencia 'AND) 2))
    ;; (is (= (precedencia '*) 6))
@@ -289,7 +289,7 @@
    ;; (is (= (precedencia 'MID$) 9))
 )
 
-(deftest aridad
+(deftest test-aridad
    ;; (is (= (aridad 'THEN) 0))
    ;; (is (= (aridad 'SIN) 1))
    ;; (is (= (aridad '*) 2))
@@ -297,23 +297,23 @@
    ;; (is (= (aridad 'MID3$) 3))
 )
 
-(deftest eliminar-cero-decimal
+(deftest test-eliminar-cero-decimal
    ;; (is (= (eliminar-cero-decimal 1.5) 1.5))
    ;; (is (= (eliminar-cero-decimal 1.50) 1.5))
    ;; (is (= (eliminar-cero-decimal 1.0) 1))
    ;; (is (= (eliminar-cero-decimal 'A) 'A))
 )
 
-(deftest eliminar-cero-entero
-   ;; (is (= (eliminar-cero-entero nil) nil))
-   ;; (is (= (eliminar-cero-entero 'A) "A"))
-   ;; (is (= (eliminar-cero-entero 0) "0"))
-   ;; (is (= (eliminar-cero-entero 1.5) "1.5"))
-   ;; (is (= (eliminar-cero-entero 1) "1"))
-   ;; (is (= (eliminar-cero-entero -1) "-1"))
-   ;; (is (= (eliminar-cero-entero -1.5) "-1.5"))
-   ;; (is (= (eliminar-cero-entero 0.5) ".5"))
-   ;; (is (= (eliminar-cero-entero -0.5) "-.5"))
+(deftest test-eliminar-cero-entero
+   (is (= (eliminar-cero-entero nil) nil))
+   (is (= (eliminar-cero-entero 'A) "A"))
+   (is (= (eliminar-cero-entero 0) "0"))
+   (is (= (eliminar-cero-entero 1.5) "1.5"))
+   (is (= (eliminar-cero-entero 1) "1"))
+   (is (= (eliminar-cero-entero -1) "-1"))
+   (is (= (eliminar-cero-entero -1.5) "-1.5"))
+   (is (= (eliminar-cero-entero 0.5) ".5"))
+   (is (= (eliminar-cero-entero -0.5) "-.5"))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
