@@ -233,6 +233,89 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+(deftest test-extraer-data
+   ; extraer-data: recibe la representación intermedia de un programa
+   ; y retorna una lista con todos los valores embebidos en las
+   ; sentencias DATA, por ejemplo:
+   ; user=> (extraer-data '(()))
+   ; ()
+   ; user=> (extraer-data (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))
+   ; ("HOLA" "MUNDO" 10 20)
+)
+
+(deftest test-ejecutar-asignacion
+   ; ejecutar-asignacion: recibe una asignacion y un ambiente, y
+   ; retorna el ambiente actualizado al efectuar la asignacion, por
+   ; ejemplo:
+   ; user=> (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
+   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]
+   ; user=> (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]
+   ; user=> (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 3}]
+   ; user=> (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+   ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}]
+)
+
+(deftest preprocesar-expresion
+   ; preprocesar-expresion: recibe una expresion y la retorna con
+   ; las variables reemplazadas por sus valores y el punto por el
+   ; cero, por ejemplo:
+   ; user=> (preprocesar-expresion '(X$ + " MUNDO" + Z$) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+   ; ("HOLA" + " MUNDO" + "")
+   ; user=> (preprocesar-expresion '(X + . / Y% * Z) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 5 Y% 2}])
+   ; (5 + 0 / 2 * 0)
+)
+
+(deftest desambiguar
+   ; desambiguar: recibe un expresion y la retorna sin los + unarios,
+   ; con los - unarios reemplazados por -u y los MID$ ternarios
+   ; reemplazados por MID3$, por ejemplo: 
+   ; user=> (desambiguar (list '- 2 '* (symbol "(") '- 3 '+ 5 '- (symbol "(") '+ 2 '/ 7 (symbol ")") (symbol ")")))
+   ; (-u 2 * ( -u 3 + 5 - ( 2 / 7 ) ))
+   ; user=> (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")")))
+   ; (MID$ ( 1 , 2 ))
+   ; user=> (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")")))
+   ; (MID3$ ( 1 , 2 , 3 ))
+   ; user=> (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
+   ; (MID3$ ( 1 , -u 2 + K , 3 ))
+)
+
+(deftest precedencia
+   ;; (is (= (precedencia 'OR) 1))
+   ;; (is (= (precedencia 'AND) 2))
+   ;; (is (= (precedencia '*) 6))
+   ;; (is (= (precedencia '-u) 7))
+   ;; (is (= (precedencia 'MID$) 9))
+)
+
+(deftest aridad
+   ;; (is (= (aridad 'THEN) 0))
+   ;; (is (= (aridad 'SIN) 1))
+   ;; (is (= (aridad '*) 2))
+   ;; (is (= (aridad 'MID$) 2))
+   ;; (is (= (aridad 'MID3$) 3))
+)
+
+(deftest eliminar-cero-decimal
+   ;; (is (= (eliminar-cero-decimal 1.5) 1.5))
+   ;; (is (= (eliminar-cero-decimal 1.50) 1.5))
+   ;; (is (= (eliminar-cero-decimal 1.0) 1))
+   ;; (is (= (eliminar-cero-decimal 'A) 'A))
+)
+
+(deftest eliminar-cero-entero
+   ;; (is (= (eliminar-cero-entero nil) nil))
+   ;; (is (= (eliminar-cero-entero 'A) "A"))
+   ;; (is (= (eliminar-cero-entero 0) "0"))
+   ;; (is (= (eliminar-cero-entero 1.5) "1.5"))
+   ;; (is (= (eliminar-cero-entero 1) "1"))
+   ;; (is (= (eliminar-cero-entero -1) "-1"))
+   ;; (is (= (eliminar-cero-entero -1.5) "-1.5"))
+   ;; (is (= (eliminar-cero-entero 0.5) ".5"))
+   ;; (is (= (eliminar-cero-entero -0.5) "-.5"))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (run-tests)
