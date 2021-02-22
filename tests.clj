@@ -86,19 +86,19 @@
       '((PRINT 1) (PRINT 2) (PRINT 3))
    ))
    (is (=
-      (expandir-nexts (list '(PRINT 1) '(NEXT A , B , C) '(PRINT 3)))
+      (expandir-nexts (list '(PRINT 1) (list 'NEXT 'A (symbol ",") 'B (symbol ",") 'C) '(PRINT 3)))
       '((PRINT 1) (NEXT A) (NEXT B) (NEXT C) (PRINT 3))
    ))
    (is (=
-      (expandir-nexts (list '(PRINT 1) '(NEXT A , B , C)))
+      (expandir-nexts (list '(PRINT 1) (list 'NEXT 'A (symbol ",") 'B (symbol ",") 'C)))
       '((PRINT 1) (NEXT A) (NEXT B) (NEXT C))
    ))
    (is (=
-      (expandir-nexts (list '(NEXT A , B , C) '(PRINT 1)))
+      (expandir-nexts (list (list 'NEXT 'A (symbol ",") 'B (symbol ",") 'C) '(PRINT 1)))
       '((NEXT A) (NEXT B) (NEXT C) (PRINT 1))
    ))
    (is (=
-      (expandir-nexts (list '(NEXT A , B , C)))
+      (expandir-nexts (list (list 'NEXT 'A (symbol ",") 'B (symbol ",") 'C)))
       '((NEXT A) (NEXT B) (NEXT C))
    ))
    (is (=
@@ -151,9 +151,71 @@
    (is (= 2 (contar-sentencias 20 [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])))
 )
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;                      TESTS DE INTEGRACIÓN                      ;
+;                       TESTS IN PROGRESS                        ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(deftest test-buscar-lineas-restantes
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [() [:ejecucion-inmediata 0] [] [] [] 0 {}])
+   ;;    nil
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes ['((PRINT X) (PRINT Y)) [:ejecucion-inmediata 2] [] [] [] 0 {}])
+   ;;    nil
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 2] [] [] [] 0 {}])
+   ;;    '((10 (PRINT X) (PRINT Y)) (15 (X = X + 1)) (20 (NEXT I , J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
+   ;;    '((10 (PRINT Y)) (15 (X = X + 1)) (20 (NEXT I , J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 0] [] [] [] 0 {}])
+   ;;    '((10) (15 (X = X + 1)) (20 (NEXT I , J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [15 1] [] [] [] 0 {}])
+   ;;    '((15 (X = X + 1)) (20 (NEXT I , J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [15 0] [] [] [] 0 {}])
+   ;;    '((15) (20 (NEXT I , J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [] [] [] 0 {}])
+   ;;    '((20 (NEXT I) (NEXT J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 2] [] [] [] 0 {}])
+   ;;    '((20 (NEXT I) (NEXT J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 1] [] [] [] 0 {}])
+   ;;    '((20 (NEXT J)))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 0] [] [] [] 0 {}])
+   ;;    '((20))
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 -1] [] [] [] 0 {}])
+   ;;    '((20))      
+   ;; ))
+   ;; (is (=
+   ;;    (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [25 0] [] [] [] 0 {}])
+   ;;    nil
+   ;; ))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                        REMAINING TESTS                         ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

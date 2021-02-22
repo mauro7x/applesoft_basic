@@ -715,7 +715,7 @@
 (defn anular-invalidos [sentencia]
   (if (empty? sentencia)
     '()
-    (if (contains? #{'! (symbol "@") (symbol "#") '$ '% '& (symbol "~") (symbol "`") } (first sentencia))   
+    (if (contains? #{'! (symbol "@") (symbol "#") '$ '% '& (symbol "~") (symbol "`") '_ (symbol "{") (symbol "}") '| (symbol "'") '. (symbol "\\") '× (symbol "[") (symbol "]")} (first sentencia))
       (cons nil (anular-invalidos (rest sentencia)))
       (cons (first sentencia) (anular-invalidos (rest sentencia)))
     ) 
@@ -922,6 +922,10 @@
   ([act prg]
     )
 )
+
+;[(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 2] [] [] [] 0 {}])
+; ((10 (PRINT X) (PRINT Y)) (15 (X = X + 1)) (20 (NEXT I , J)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; continuar-linea: implementa la sentencia RETURN, retornando una
