@@ -222,6 +222,17 @@
    ))
 )
 
+(deftest test-extraer-data
+   (is (=
+      (extraer-data '(()))
+      '()
+   ))
+   (is (=
+      (extraer-data (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))
+      '("HOLA" "MUNDO" 10 20)
+   ))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;                       TESTS IN PROGRESS                        ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -232,16 +243,6 @@
 ;                        REMAINING TESTS                         ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-(deftest test-extraer-data
-   ; extraer-data: recibe la representación intermedia de un programa
-   ; y retorna una lista con todos los valores embebidos en las
-   ; sentencias DATA, por ejemplo:
-   ; user=> (extraer-data '(()))
-   ; ()
-   ; user=> (extraer-data (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))
-   ; ("HOLA" "MUNDO" 10 20)
-)
 
 (deftest test-ejecutar-asignacion
    ; ejecutar-asignacion: recibe una asignacion y un ambiente, y

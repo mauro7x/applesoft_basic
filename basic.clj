@@ -41,7 +41,7 @@
 (declare contar-sentencias)               ; DONE
 (declare buscar-lineas-restantes)         ; DONE (*)
 (declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
-(declare extraer-data)                    ; IMPLEMENTAR
+(declare extraer-data)                    ; DONE
 (declare ejecutar-asignacion)             ; IMPLEMENTAR
 (declare preprocesar-expresion)           ; IMPLEMENTAR
 (declare desambiguar)                     ; IMPLEMENTAR
@@ -943,9 +943,9 @@
 (defn buscar-lineas-restantes
   ([amb] (buscar-lineas-restantes (amb 1) (amb 0)))
   ([act prg]
-    (if (integer? (act 0))
-      (buscar-lineas-restantes-aux prg (act 0) (act 1))
+    (if (= :ejecucion_inmediata (act 0))
       nil ;; Esto lo deduje de los casos de uso, no tiene lógica sino el segundo caso de uso
+      (buscar-lineas-restantes-aux prg (act 0) (act 1))
     )
   )
 )
@@ -965,7 +965,7 @@
 (defn continuar-linea [amb]
   (if (empty? (amb 2))
     [(dar-error 22 (amb 1)) amb]
-    [:omitir-restante [(amb 0) (assoc ((amb 2) 0) 1 (- (((amb 2) 0) 1) 1)) (into [] (rest (amb 2))) (amb 3) (amb 4) (amb 5) (amb 6)]]
+    [:omitir-restante [(amb 0) (assoc ((amb 2) 0) 1 (- (((amb 2) 0) 1) 1)) (vec (rest (amb 2))) (amb 3) (amb 4) (amb 5) (amb 6)]]
   )
 )
 
@@ -978,7 +978,34 @@
 ; user=> (extraer-data (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))
 ; ("HOLA" "MUNDO" 10 20)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn extraer-valores-de-data [args]
+  ; ej: (DATA 20)
+  ; ej: (DATA MUNDO , 10 , 20)
+  (cond
+    (empty? args) '()
+    (= (first args) (symbol ",")) (extraer-valores-de-data (rest args))
+    (number? (first args)) (cons (first args) (extraer-valores-de-data (rest args)))
+    :else(cons (str (first args)) (extraer-valores-de-data (rest args)))
+  )
+)
+
+(defn extraer-data-de-linea [linea]
+  ; ej: (10 (PRINT X) (REM ESTE NO) (DATA 30))
+  ; ej: (100 (DATA MUNDO , 10 , 20))
+  (if (or (empty? linea) (= (first (first linea)) 'REM))
+    '()
+    (if (= (first (first linea)) 'DATA)
+      (concat (extraer-valores-de-data (rest (first linea))) (extraer-data-de-linea (rest linea)))
+      (extraer-data-de-linea (rest linea))
+    )
+  )
+)
+
 (defn extraer-data [prg]
+  (if (empty? prg)
+    '()
+    (concat (extraer-data-de-linea (rest (first prg))) (extraer-data (rest prg)))
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
