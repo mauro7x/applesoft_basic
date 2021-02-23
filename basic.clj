@@ -766,7 +766,7 @@
 (defn anular-invalidos [sentencia]
   (if (empty? sentencia)
     '()
-    (if (contains? #{'! (symbol "@") (symbol "#") '$ '% '& (symbol "~") (symbol "`") '_ (symbol "{") (symbol "}") '| (symbol "'") '. (symbol "\\") '× (symbol "[") (symbol "]")} (first sentencia))
+    (if (contains? #{'! (symbol "@") (symbol "#") '$ '% '& (symbol "~") (symbol "`") '_ (symbol "{") (symbol "}") '| (symbol "'") (symbol "\\") '× (symbol "[") (symbol "]")} (first sentencia))
       (cons nil (anular-invalidos (rest sentencia)))
       (cons (first sentencia) (anular-invalidos (rest sentencia)))
     ) 
