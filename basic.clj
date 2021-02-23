@@ -535,7 +535,7 @@
   (if (or (contains? (set sentencia) nil) (and (palabra-reservada? (first sentencia)) (= (second sentencia) '=)))
       (do (dar-error 16 (amb 1)) [nil amb])  ; Syntax error  
       (case (first sentencia)
-        PRINT (let [args (next sentencia), resu (imprimir args amb)]
+        (PRINT ?) (let [args (next sentencia), resu (imprimir args amb)]
                    (if (and (nil? resu) (some? args))
                        [nil amb]
                        [:sin-errores amb]))
@@ -608,6 +608,21 @@
         NEXT (if (<= (count (next sentencia)) 1)
                  (retornar-al-for amb (fnext sentencia))
                   (do (dar-error 16 (amb 1)) [nil amb]))  ; Syntax error
+        
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;                            IMPLEMENTAR                             ;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+        DATA [:omitir-restante amb]
+        READ [:omitir-restante amb]
+        RESTORE [:omitir-restante amb]
+        CLEAR [:omitir-restante amb]
+        LET [:omitir-restante amb]
+        LIST [:omitir-restante amb]
+        END [:omitir-restante amb]
+
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
         (if (= (second sentencia) '=)
             (let [resu (ejecutar-asignacion sentencia amb)]
                  (if (nil? resu)
@@ -628,6 +643,10 @@
         (case operador
           -u (- operando)
           LEN (count operando)
+          ATN (Math/atn operando)
+          INT (int operando)
+          SIN (Math/sin operando)
+          ASC (int (.charAt (str (first operando)) 0))
           STR$ (if (not (number? operando)) (dar-error 163 nro-linea) (eliminar-cero-entero operando)) ; Type mismatch error
           CHR$ (if (or (< operando 0) (> operando 255)) (dar-error 53 nro-linea) (str (char operando)))))) ; Illegal quantity error
   ([operador operando1 operando2 nro-linea]
@@ -639,11 +658,21 @@
           = (if (and (string? operando1) (string? operando2))
                 (if (= operando1 operando2) 1 0)
                 (if (= (+ 0 operando1) (+ 0 operando2)) 1 0))
+          <> (if (and (string? operando1) (string? operando2))
+                (if (not= operando1 operando2) 1 0)
+                (if (not= (+ 0 operando1) (+ 0 operando2)) 1 0))
           + (if (and (string? operando1) (string? operando2))
                 (str operando1 operando2)
                 (+ operando1 operando2))
+          - (- operando1 operando2)
+          * (* operando1 operando2)
           / (if (= operando2 0) (dar-error 133 nro-linea) (/ operando1 operando2))  ; Division by zero error
+          < (if (< operando1 operando2) 1 0)
+          <= (if (<= operando1 operando2) 1 0)
+          > (if (> operando1 operando2) 1 0)
+          >= (if (>= operando1 operando2) 1 0)
           AND (let [op1 (+ 0 operando1), op2 (+ 0 operando2)] (if (and (not= op1 0) (not= op2 0)) 1 0))
+          OR (let [op1 (+ 0 operando1), op2 (+ 0 operando2)] (if (or (not= op1 0) (not= op2 0)) 1 0))
           MID$ (if (< operando2 1)
                    (dar-error 53 nro-linea)  ; Illegal quantity error
                    (let [ini (dec operando2)] (if (>= ini (count operando1)) "" (subs operando1 ini))))))))

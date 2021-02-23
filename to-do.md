@@ -6,3 +6,12 @@
 
 ## tests.clj
 - [ ] Testear "dar-error". 
+
+## evaluar
+- [ ] DATA
+- [ ] READ
+- [ ] RESTORE
+- [ ] CLEAR
+- [ ] LET/=
+- [ ] LIST
+- [ ] END
