@@ -1135,19 +1135,26 @@
 ; 9
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn precedencia [token]
-  ({
-    (symbol ",") 0
-    'OR 1
-    'AND 2
-    '<= 3 '>= 3
-    '= 4 '<> 4 '< 4 '> 4
-    '+ 5 '- 5
-    '* 6 '/ 6
-    '-u 7
-    (symbol "^") 8
-    'ATN 9 'INT 9 'SIN 9 'LEN 9 'MID$ 9 'ASC 9 'CHR$ 9 'STR$ 9
-    (symbol "(") nil (symbol ")") nil
-  } token)
+  (let [dict {
+              (symbol ",") 0
+              'OR 1
+              'AND 2
+              '<= 3 '>= 3
+              '= 4 '<> 4 '< 4 '> 4
+              '+ 5 '- 5
+              '* 6 '/ 6
+              '-u 7
+              (symbol "^") 8
+              'ATN 9 'INT 9 'SIN 9 'LEN 9 'MID$ 9 'MID3$ 9 'ASC 9 'CHR$ 9 'STR$ 9
+            }]
+    (if (contains? dict token)
+      (dict token)
+      (if (parentesis? token)
+        nil
+        10
+      )
+    )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
