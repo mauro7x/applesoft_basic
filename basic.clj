@@ -880,7 +880,7 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-valida? [x]
-  (not (or (palabra-reservada? x) (not (symbol? x)) (contains? #{(symbol "(") (symbol ")") (symbol ";")} x)))
+  (not (or (palabra-reservada? x) (not (symbol? x)) (contains? #{(symbol "(") (symbol ")") (symbol ";") (symbol ",")} x)))
 )
 
 (defn variable-float? [x]
