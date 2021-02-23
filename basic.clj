@@ -1142,7 +1142,7 @@
     '-u 7
     (symbol "^") 8
     'ATN 9 'INT 9 'SIN 9 'LEN 9 'MID$ 9 'ASC 9 'CHR$ 9 'STR$ 9
-    (symbol "(") 10 (symbol ")") 10
+    (symbol "(") nil (symbol ")") nil
   } token)
 )
 
