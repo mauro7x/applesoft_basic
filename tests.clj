@@ -299,8 +299,8 @@
    (is (= (precedencia 'ASC) 9))
    (is (= (precedencia 'CHR$) 9))
    (is (= (precedencia 'STR$) 9))
-   (is (= (precedencia (symbol "(")) 10))
-   (is (= (precedencia (symbol ")")) 10))
+   (is (= (precedencia (symbol "(")) nil))
+   (is (= (precedencia (symbol ")")) nil))
 )
 
 (deftest test-aridad
