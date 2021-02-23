@@ -8,5 +8,3 @@
 170 PRINT "*" : A = 8 * ATN(1)
 180 PRINT INT (A * 100) / 100, "   ";INT (SIN(A) * 100000) / 100000
 190 FOR I = 1 TO 19 : PRINT " "; : NEXT I : PRINT "*"
-
-

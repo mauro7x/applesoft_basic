@@ -29,26 +29,36 @@
 (declare evaluar)                         ; COMPLETAR
 (declare aplicar)                         ; COMPLETAR
 
-(declare palabra-reservada?)              ; IMPLEMENTAR
-(declare operador?)                       ; IMPLEMENTAR
-(declare anular-invalidos)                ; IMPLEMENTAR
-(declare cargar-linea)                    ; IMPLEMENTAR
-(declare expandir-nexts)                  ; IMPLEMENTAR
-(declare dar-error)                       ; IMPLEMENTAR
-(declare variable-float?)                 ; IMPLEMENTAR
-(declare variable-integer?)               ; IMPLEMENTAR
-(declare variable-string?)                ; IMPLEMENTAR
-(declare contar-sentencias)               ; IMPLEMENTAR
-(declare buscar-lineas-restantes)         ; IMPLEMENTAR
-(declare continuar-linea)                 ; IMPLEMENTAR
-(declare extraer-data)                    ; IMPLEMENTAR
-(declare ejecutar-asignacion)             ; IMPLEMENTAR
-(declare preprocesar-expresion)           ; IMPLEMENTAR
-(declare desambiguar)                     ; IMPLEMENTAR
-(declare precedencia)                     ; IMPLEMENTAR
-(declare aridad)                          ; IMPLEMENTAR
-(declare eliminar-cero-decimal)           ; IMPLEMENTAR
-(declare eliminar-cero-entero)            ; IMPLEMENTAR
+(declare palabra-reservada?)              ; DONE
+(declare operador?)                       ; DONE
+(declare anular-invalidos)                ; DONE
+(declare cargar-linea)                    ; DONE
+(declare expandir-nexts)                  ; DONE
+(declare dar-error)                       ; DONE, OUTPUT NOT TESTED
+(declare variable-float?)                 ; DONE
+(declare variable-integer?)               ; DONE
+(declare variable-string?)                ; DONE
+(declare contar-sentencias)               ; DONE
+(declare buscar-lineas-restantes)         ; DONE
+(declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
+(declare extraer-data)                    ; DONE
+(declare ejecutar-asignacion)             ; DONE
+(declare preprocesar-expresion)           ; DONE
+(declare desambiguar)                     ; DONE
+(declare precedencia)                     ; DONE
+(declare aridad)                          ; DONE
+(declare eliminar-cero-decimal)           ; DONE
+(declare eliminar-cero-entero)            ; DONE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                     FUNCIONES AUXILIARES                     ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(declare extraer-valores-de-data)
+
+(defn parentesis? [token]
+  (contains? #{(symbol "(") (symbol ")")} token)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; driver-loop: el REPL del interprete de Applesoft BASIC
@@ -525,7 +535,7 @@
   (if (or (contains? (set sentencia) nil) (and (palabra-reservada? (first sentencia)) (= (second sentencia) '=)))
       (do (dar-error 16 (amb 1)) [nil amb])  ; Syntax error  
       (case (first sentencia)
-        PRINT (let [args (next sentencia), resu (imprimir args amb)]
+        (PRINT ?) (let [args (next sentencia), resu (imprimir args amb)]
                    (if (and (nil? resu) (some? args))
                        [nil amb]
                        [:sin-errores amb]))
@@ -598,6 +608,25 @@
         NEXT (if (<= (count (next sentencia)) 1)
                  (retornar-al-for amb (fnext sentencia))
                   (do (dar-error 16 (amb 1)) [nil amb]))  ; Syntax error
+        LET (let [resu (ejecutar-asignacion (rest sentencia) amb)]
+                  (if (nil? resu)
+                      [nil amb]
+                      [:sin-errores resu]))
+        LIST (do (print (amb 0)) [:sin-errores amb])
+        
+
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;                             COMPARAR                               ;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
+        
+        CLEAR [:sin-errores (assoc amb 6 {})]
+        END [:omitir-restante (assoc amb 1 [:ejecucion_inmediata 0])]
+        DATA [:sin-errores (assoc amb 4 (vec (concat (amb 4) (extraer-valores-de-data (next sentencia)))))]
+        READ (leer-data (next sentencia) amb)
+        RESTORE [:sin-errores (assoc amb 5 0)]
+        
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
         (if (= (second sentencia) '=)
             (let [resu (ejecutar-asignacion sentencia amb)]
                  (if (nil? resu)
@@ -618,6 +647,10 @@
         (case operador
           -u (- operando)
           LEN (count operando)
+          ATN (Math/atan operando)
+          INT (int operando)
+          SIN (Math/sin operando)
+          ASC (int (.charAt (str (first operando)) 0))
           STR$ (if (not (number? operando)) (dar-error 163 nro-linea) (eliminar-cero-entero operando)) ; Type mismatch error
           CHR$ (if (or (< operando 0) (> operando 255)) (dar-error 53 nro-linea) (str (char operando)))))) ; Illegal quantity error
   ([operador operando1 operando2 nro-linea]
@@ -629,11 +662,21 @@
           = (if (and (string? operando1) (string? operando2))
                 (if (= operando1 operando2) 1 0)
                 (if (= (+ 0 operando1) (+ 0 operando2)) 1 0))
+          <> (if (and (string? operando1) (string? operando2))
+                (if (not= operando1 operando2) 1 0)
+                (if (not= (+ 0 operando1) (+ 0 operando2)) 1 0))
           + (if (and (string? operando1) (string? operando2))
                 (str operando1 operando2)
                 (+ operando1 operando2))
+          - (- operando1 operando2)
+          * (* operando1 operando2)
           / (if (= operando2 0) (dar-error 133 nro-linea) (/ operando1 operando2))  ; Division by zero error
+          < (if (< operando1 operando2) 1 0)
+          <= (if (<= operando1 operando2) 1 0)
+          > (if (> operando1 operando2) 1 0)
+          >= (if (>= operando1 operando2) 1 0)
           AND (let [op1 (+ 0 operando1), op2 (+ 0 operando2)] (if (and (not= op1 0) (not= op2 0)) 1 0))
+          OR (let [op1 (+ 0 operando1), op2 (+ 0 operando2)] (if (or (not= op1 0) (not= op2 0)) 1 0))
           MID$ (if (< operando2 1)
                    (dar-error 53 nro-linea)  ; Illegal quantity error
                    (let [ini (dec operando2)] (if (>= ini (count operando1)) "" (subs operando1 ini))))))))
@@ -661,6 +704,32 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn palabra-reservada? [x]
+  (contains?
+    #{
+      ;; Comandos de Apple DOS 3.3
+      'LOAD 'SAVE
+
+      ;; Sentencias de Applesoft BASIC
+      'INPUT 'PRINT '?
+      'DATA 'READ 'REM 'RESTORE
+      'CLEAR 'LET 'LIST 'NEW 'RUN
+      'END 'FOR 'TO 'NEXT 'STEP 'GOSUB 'RETURN 'GOTO 'IF 'THEN 'ON
+
+      ;; Sentencias del intérprete
+      'ENV 'EXIT
+
+      ;; Funciones de Applesoft BASIC
+      'ATN 'INT 'SIN
+      'LEN 'MID$
+      'ASC 'CHR$ 'STR$
+
+      ;; Operadores de Applesoft BASIC
+      '+ '- '* '/ (symbol "^")
+      '= '<> '< '<= '> '>=
+      'AND 'OR
+    }
+    x
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -674,6 +743,13 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn operador? [x]
+  (contains?
+    #{
+      'ATN 'INT 'SIN 'LEN 'MID$ 'MID3$ 'ASC 'CHR$ 'STR$
+      '+ '-u '- '* '/ (symbol "^") '= '<> '< '<= '> '>= 'AND 'OR
+    }
+    x
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -683,6 +759,13 @@
 ; (IF X nil * Y < 12 THEN LET nil X = 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn anular-invalidos [sentencia]
+  (if (empty? sentencia)
+    '()
+    (if (contains? #{'! (symbol "@") (symbol "#") '$ '% '& (symbol "~") (symbol "`") '_ (symbol "{") (symbol "}") '| (symbol "'") (symbol "\\") '× (symbol "[") (symbol "]")} (first sentencia))
+      (cons nil (anular-invalidos (rest sentencia)))
+      (cons (first sentencia) (anular-invalidos (rest sentencia)))
+    ) 
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -697,7 +780,19 @@
 ; user=> (cargar-linea '(15 (X = X - 1)) ['((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
 ; [((10 (PRINT X)) (15 (X = X - 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn agregar-sentencia [sentencia sentencias]
+  (if (empty? sentencias)
+    (list sentencia)
+    (cond
+      (< (first sentencia) (first (first sentencias))) (cons sentencia sentencias)
+      (> (first sentencia) (first (first sentencias))) (cons (first sentencias) (agregar-sentencia sentencia (rest sentencias)))
+      :else (cons sentencia (rest sentencias))
+    )
+  )
+)
+
 (defn cargar-linea [linea amb]
+  (assoc amb 0 (agregar-sentencia linea (first amb)))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -711,7 +806,31 @@
 ; user=> (expandir-nexts n)
 ; ((PRINT 1) (NEXT A) (NEXT B))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn expandir-nexts [n]
+(defn expandir-next-aux [parameters]
+  (if (empty? parameters)
+    '()
+    (if (= (symbol ",") (first parameters))
+      (expandir-next-aux (rest parameters))
+      (cons (list 'NEXT (first parameters)) (expandir-next-aux (rest parameters)))
+    )
+  )
+)
+
+(defn expandir-next [next-compuesto]
+  (if (empty? (rest next-compuesto))
+    (list next-compuesto)
+    (expandir-next-aux (rest next-compuesto))
+  )
+)
+
+(defn expandir-nexts [sentencias]
+  (if (empty? sentencias)
+    sentencias
+    (if (= 'NEXT (first (first sentencias)))
+      (concat (expandir-next (first sentencias)) (expandir-nexts (rest sentencias)))
+      (cons (first sentencias) (expandir-nexts (rest sentencias)))
+    )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -731,7 +850,18 @@
 ;
 ; ?ERROR DISK FULL IN 100nil
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn dar-error-aux [msg prog-ptrs]
+  (if (integer? (first prog-ptrs))
+    (print (apply str (concat "\n" msg " IN " (str (first prog-ptrs)))))
+    (print (apply str (concat "\n" msg)))
+  )
+)
+
 (defn dar-error [cod prog-ptrs]
+  (if (integer? cod)
+    (dar-error-aux (buscar-mensaje cod) prog-ptrs)
+    (dar-error-aux cod prog-ptrs)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -744,7 +874,18 @@
 ; user=> (variable-float? 'X$)
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn variable-valida? [x]
+  (not (or (palabra-reservada? x) (not (symbol? x)) (contains? #{(symbol "(") (symbol ")") (symbol ";") (symbol ",")} x)))
+)
+
 (defn variable-float? [x]
+  (if (variable-valida? x)
+    (not (or
+      (= (symbol (str (last (str x)))) '%)
+      (= (symbol (str (last (str x)))) '$)
+    ))
+    false
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -758,6 +899,10 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-integer? [x]
+  (if (variable-valida? x)
+    (= (symbol (str (last (str x)))) '%)
+    false
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -771,6 +916,10 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-string? [x]
+  (if (variable-valida? x)
+    (= (symbol (str (last (str x)))) '$)
+    false
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -784,7 +933,15 @@
 ; user=> (contar-sentencias 20 [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
 ; 2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn contar-sentencias-aux [nro-linea lineas]
+  (if (= nro-linea (first (first lineas)))
+    (count (expandir-nexts (rest (first lineas))))
+    (contar-sentencias-aux nro-linea (rest lineas))
+  )
+)
+
 (defn contar-sentencias [nro-linea amb]
+  (contar-sentencias-aux nro-linea (first amb))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -819,10 +976,27 @@
 ; user=> (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [25 0] [] [] [] 0 {}])
 ; nil
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn buscar-lineas-restantes-aux [prg linea n]
+  (if (empty? prg)
+    nil
+    (if (= linea (first (first prg)))
+      (cons
+        (cons linea (take-last n (expandir-nexts (rest (first prg))))) 
+        (rest prg)
+      )
+      (buscar-lineas-restantes-aux (rest prg) linea n)
+    )
+  )
+)
+
 (defn buscar-lineas-restantes
   ([amb] (buscar-lineas-restantes (amb 1) (amb 0)))
   ([act prg]
+    (if (= :ejecucion_inmediata (act 0))
+      nil ;; Esto lo deduje de los casos de uso, no tiene lógica sino el segundo caso de uso
+      (buscar-lineas-restantes-aux prg (act 0) (act 1))
     )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -836,7 +1010,20 @@
 ; user=> (continuar-linea [(list '(10 (PRINT X)) '(15 (GOSUB 100) (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [[15 2]] [] [] 0 {}])
 ; [:omitir-restante [((10 (PRINT X)) (15 (GOSUB 100) (X = X + 1)) (20 (NEXT I , J))) [15 1] [] [] [] 0 {}]]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn continuar-linea [amb]
+  (if (empty? (amb 2))
+    [(dar-error 22 (amb 1)) amb]
+    [:omitir-restante [
+      (amb 0)
+      (assoc ((amb 2) 0) 1 (- (((amb 2) 0) 1) 1))
+      (vec (rest (amb 2)))
+      (amb 3)
+      (amb 4)
+      (amb 5)
+      (amb 6)
+    ]]
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -848,7 +1035,34 @@
 ; user=> (extraer-data (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))
 ; ("HOLA" "MUNDO" 10 20)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn extraer-valores-de-data [args]
+  ; ej: (DATA 20)
+  ; ej: (DATA MUNDO , 10 , 20)
+  (cond
+    (empty? args) '()
+    (= (first args) (symbol ",")) (extraer-valores-de-data (rest args))
+    (number? (first args)) (cons (first args) (extraer-valores-de-data (rest args)))
+    :else(cons (str (first args)) (extraer-valores-de-data (rest args)))
+  )
+)
+
+(defn extraer-data-de-linea [linea]
+  ; ej: (10 (PRINT X) (REM ESTE NO) (DATA 30))
+  ; ej: (100 (DATA MUNDO , 10 , 20))
+  (if (or (empty? linea) (= (first (first linea)) 'REM))
+    '()
+    (if (= (first (first linea)) 'DATA)
+      (concat (extraer-valores-de-data (rest (first linea))) (extraer-data-de-linea (rest linea)))
+      (extraer-data-de-linea (rest linea))
+    )
+  )
+)
+
 (defn extraer-data [prg]
+  (if (empty? prg)
+    '()
+    (concat (extraer-data-de-linea (rest (first prg))) (extraer-data (rest prg)))
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -864,7 +1078,13 @@
 ; user=> (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
 ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn ejecutar-asignacion [sentencia amb]
+  (assoc amb 6
+    (assoc (amb 6) (first sentencia)
+      (calcular-expresion (drop 2 sentencia) amb)
+    )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -877,6 +1097,14 @@
 ; (5 + 0 / 2 * 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn preprocesar-expresion [expr amb]
+  (let [x (first expr)] (cond
+    (empty? expr) '()
+    (= x '.) (cons 0 (preprocesar-expresion (rest expr) amb))
+    (contains? (amb 6) x) (cons ((amb 6) x) (preprocesar-expresion (rest expr) amb))
+    (or (variable-float? x) (variable-integer? x)) (cons 0 (preprocesar-expresion (rest expr) amb))
+    (variable-string? x) (cons "" (preprocesar-expresion (rest expr) amb))
+    :else(cons x (preprocesar-expresion (rest expr) amb))
+  ))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -892,7 +1120,9 @@
 ; user=> (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
 ; (MID3$ ( 1 , -u 2 + K , 3 ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn desambiguar [expr]
+  (desambiguar-mas-menos (desambiguar-mid expr))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -910,6 +1140,26 @@
 ; 9
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn precedencia [token]
+  (let [dict {
+              (symbol ",") 0
+              'OR 1
+              'AND 2
+              '<= 3 '>= 3
+              '= 4 '<> 4 '< 4 '> 4
+              '+ 5 '- 5
+              '* 6 '/ 6
+              '-u 7
+              (symbol "^") 8
+              'ATN 9 'INT 9 'SIN 9 'LEN 9 'MID$ 9 'MID3$ 9 'ASC 9 'CHR$ 9 'STR$ 9
+            }]
+    (if (contains? dict token)
+      (dict token)
+      (if (parentesis? token)
+        nil
+        10
+      )
+    )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -926,7 +1176,39 @@
 ; user=> (aridad 'MID3$)
 ; 3
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn aridad [token]
+  (if (not (operador? token))
+    0
+    ({
+      ;; Funciones
+      'ATN          1
+      'INT          1
+      'SIN          1
+      'LEN          1
+      'MID$         2
+      'MID3$        3
+      'ASC          1
+      'CHR$         1
+      'STR$         1
+
+      ;; Operadores
+      '+            2
+      '-u           1
+      '-            2
+      '*            2
+      '/            2
+      (symbol "^")  2
+      '=            2
+      '<>           2
+      '<            2
+      '<=           2
+      '>            2
+      '>=           2
+      'AND          2
+      'OR           2
+    } token)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -942,6 +1224,13 @@
 ; A
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn eliminar-cero-decimal [n]
+  (if (number? n)
+    (if (= (float (- n (int n))) 0.0)
+      (int n)
+      n
+    )
+    n
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -968,6 +1257,15 @@
 ; "-.5"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn eliminar-cero-entero [n]
+  (cond
+    (= nil n) nil
+    (number? n) (cond
+                  (and (> n 0) (< n 1)) (apply str (rest (str n)))
+                  (and (< n 0) (> n -1)) (apply str (concat "-" (rest (rest (str n)))))
+                  :else(str n)
+                )
+    :else(str n)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
