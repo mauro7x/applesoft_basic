@@ -612,21 +612,23 @@
         NEXT (if (<= (count (next sentencia)) 1)
                  (retornar-al-for amb (fnext sentencia))
                   (do (dar-error 16 (amb 1)) [nil amb]))  ; Syntax error
-        
+        LET (let [resu (ejecutar-asignacion (rest sentencia) amb)]
+                  (if (nil? resu)
+                      [nil amb]
+                      [:sin-errores resu]))
+        CLEAR [:sin-errores (assoc amb 6 {})]
+        LIST (do (print (amb 0)) [:sin-errores amb])
+
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         ;                            IMPLEMENTAR                             ;
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+        END [:sin-errores [(amb 0) [:ejecucion_inmediata 0] [] [] [] 0 {}]]
+        
         DATA [:omitir-restante amb]
         READ [:omitir-restante amb]
         RESTORE [:omitir-restante amb]
-        CLEAR [:omitir-restante amb]
-        LET (let [resu (ejecutar-asignacion (rest sentencia) amb)]
-                 (if (nil? resu)
-                     [nil amb]
-                     [:sin-errores resu]))
-        LIST [:omitir-restante amb]
-        END [:omitir-restante amb]
+        
 
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
