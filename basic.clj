@@ -34,7 +34,7 @@
 (declare anular-invalidos)                ; DONE
 (declare cargar-linea)                    ; DONE
 (declare expandir-nexts)                  ; DONE
-(declare dar-error)                       ; DONE, NOT TESTED
+(declare dar-error)                       ; DONE, OUTPUT NOT TESTED
 (declare variable-float?)                 ; DONE
 (declare variable-integer?)               ; DONE
 (declare variable-string?)                ; DONE
@@ -42,7 +42,7 @@
 (declare buscar-lineas-restantes)         ; DONE (*)
 (declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
 (declare extraer-data)                    ; DONE
-(declare ejecutar-asignacion)             ; DONE, TEST INACTIVE
+(declare ejecutar-asignacion)             ; DONE
 (declare preprocesar-expresion)           ; DONE
 (declare desambiguar)                     ; DONE
 (declare precedencia)                     ; DONE

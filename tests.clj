@@ -111,23 +111,12 @@
    ))
 )
 
-; dar-error: recibe un error (codigo o mensaje) y el puntero de 
-; programa, muestra el error correspondiente y retorna nil, por
-; ejemplo:
-; user=> (dar-error 16 [:ejecucion-inmediata 4])
-;
-; ?SYNTAX ERRORnil
-; user=> (dar-error "?ERROR DISK FULL" [:ejecucion-inmediata 4])
-;
-; ?ERROR DISK FULLnil
-; user=> (dar-error 16 [100 3])
-;
-; ?SYNTAX ERROR IN 100nil
-; user=> (dar-error "?ERROR DISK FULL" [100 3])
-;
-; ?ERROR DISK FULL IN 100nil
 (deftest test-dar-error
-   ;; Cómo testeamos input?
+   ;; NO TESTEA OUTPUT
+   (is (= nil (dar-error 16 [:ejecucion-inmediata 4])))
+   (is (= nil (dar-error "?ERROR DISK FULL" [:ejecucion-inmediata 4])))
+   (is (= nil (dar-error 16 [100 3])))
+   (is (= nil (dar-error "?ERROR DISK FULL" [100 3])))
 )
 
 (deftest test-variable-float?
@@ -237,7 +226,24 @@
    ))
 )
 
-;; acá va test-ejecutar-asignacion
+(deftest test-ejecutar-asignacion
+   (is (=
+      (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
+      ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
+   ))
+   (is (=
+      (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+      ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
+   ))
+   (is (=
+      (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+      ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 3}] 
+   ))
+   (is (=
+      (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+      ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X$ "HOLA MUNDO"}] 
+   ))
+)
 
 (deftest test-preprocesar-expresion
    (is (=
@@ -323,30 +329,6 @@
    (is (= (eliminar-cero-entero -1.5) "-1.5"))
    (is (= (eliminar-cero-entero 0.5) ".5"))
    (is (= (eliminar-cero-entero -0.5) "-.5"))
-)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;                       TESTS IN PROGRESS                        ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Esperando por correlativas...
-(deftest test-ejecutar-asignacion
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
-   ;; ))
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
-   ;; ))
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 3}] 
-   ;; ))
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X$ "HOLA MUNDO"}] 
-   ;; ))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
