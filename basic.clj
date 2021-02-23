@@ -45,7 +45,7 @@
 (declare ejecutar-asignacion)             ; DONE, TEST INACTIVE
 (declare preprocesar-expresion)           ; DONE
 (declare desambiguar)                     ; DONE
-(declare precedencia)                     ; IMPLEMENTAR
+(declare precedencia)                     ; DONE
 (declare aridad)                          ; IMPLEMENTAR
 (declare eliminar-cero-decimal)           ; DONE
 (declare eliminar-cero-entero)            ; DONE
@@ -1072,39 +1072,9 @@
 ; user=> (desambiguar (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
 ; (MID3$ ( 1 , -u 2 + K , 3 ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn mid-ternario? [expr n_params]
-  ; ej: (( 1 , 2 )) ===> false
-  ; ej: (( 1 , 2 , 3 )) ===> true
-  (let [x (first expr)] (cond
-    (= n_params 3) true
-    (= x (symbol ")")) false
-    (contains? #{(symbol "(") (symbol ",")} x) (mid-ternario? (rest expr) n_params)
-    :else(mid-ternario? (rest expr) (+ n_params 1))
-  ))
-)
-
-(defn prox-operador-binario? [v1 v2]
-  ; ej: 4 + ===> true
-  ; ej: ( + ===> false
-  (not (or
-    (not (contains? #{'+ '-} v2))
-    (palabra-reservada? v1)
-    (contains? #{(symbol "(") (symbol ")") (symbol ",")} v1)
-  ))
-)
 
 (defn desambiguar [expr]
-  (let [v1 (first expr) v2 (first (rest expr))] (cond
-    (empty? expr) '()
-    (= v1 '-) (cons (symbol "-u") (desambiguar (rest expr)))
-    (= v1 '+) (desambiguar (rest expr))
-    (= v1 'MID$) (if (mid-ternario? (rest expr) 0)
-                    (cons 'MID3$ (desambiguar (rest expr)))
-                    (cons 'MID$ (desambiguar (rest expr)))
-                 )
-    (prox-operador-binario? v1 v2) (concat (list v1 v2) (desambiguar (rest (rest expr))))
-    :else(cons v1 (desambiguar (rest expr)))
-  ))
+  (desambiguar-mas-menos (desambiguar-mid expr))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1122,6 +1092,19 @@
 ; 9
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn precedencia [token]
+  ({
+    (symbol ",") 0
+    'OR 1
+    'AND 2
+    '<= 3 '>= 3
+    '= 4 '<> 4 '< 4 '> 4
+    '+ 5 '- 5
+    '* 6 '/ 6
+    '-u 7
+    (symbol "^") 8
+    'ATN 9 'INT 9 'SIN 9 'LEN 9 'MID$ 9 'ASC 9 'CHR$ 9 'STR$ 9
+    (symbol "(") 10 (symbol ")") 10
+  } token)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
