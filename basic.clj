@@ -39,7 +39,7 @@
 (declare variable-integer?)               ; DONE
 (declare variable-string?)                ; DONE
 (declare contar-sentencias)               ; DONE
-(declare buscar-lineas-restantes)         ; DONE (*)
+(declare buscar-lineas-restantes)         ; DONE
 (declare continuar-linea)                 ; DONE, OUTPUT NOT TESTED
 (declare extraer-data)                    ; DONE
 (declare ejecutar-asignacion)             ; DONE
@@ -49,8 +49,6 @@
 (declare aridad)                          ; DONE
 (declare eliminar-cero-decimal)           ; DONE
 (declare eliminar-cero-entero)            ; DONE
-
-; (*) Comentarios agregados, por ej. que haya tenido que asumir algo.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;                     FUNCIONES AUXILIARES                     ;
@@ -618,18 +616,16 @@
                       [:sin-errores resu]))
         CLEAR [:sin-errores (assoc amb 6 {})]
         LIST (do (print (amb 0)) [:sin-errores amb])
+        END [:omitir-restante (assoc amb 1 [:ejecucion_inmediata 0])]
 
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         ;                            IMPLEMENTAR                             ;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-        END [:sin-errores [(amb 0) [:ejecucion_inmediata 0] [] [] [] 0 {}]]
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;      
         
         DATA [:omitir-restante amb]
         READ [:omitir-restante amb]
         RESTORE [:omitir-restante amb]
         
-
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
         (if (= (second sentencia) '=)
@@ -1019,7 +1015,15 @@
 (defn continuar-linea [amb]
   (if (empty? (amb 2))
     [(dar-error 22 (amb 1)) amb]
-    [:omitir-restante [(amb 0) (assoc ((amb 2) 0) 1 (- (((amb 2) 0) 1) 1)) (vec (rest (amb 2))) (amb 3) (amb 4) (amb 5) (amb 6)]]
+    [:omitir-restante [
+      (amb 0)
+      (assoc ((amb 2) 0) 1 (- (((amb 2) 0) 1) 1))
+      (vec (rest (amb 2)))
+      (amb 3)
+      (amb 4)
+      (amb 5)
+      (amb 6)
+    ]]
   )
 )
 
