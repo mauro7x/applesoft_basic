@@ -751,7 +751,7 @@
   (contains?
     #{
       'ATN 'INT 'SIN 'LEN 'MID$ 'MID3$ 'ASC 'CHR$ 'STR$
-      '+ '- '* '/ (symbol "^") '= '<> '< '<= '> '>= 'AND 'OR
+      '+ '-u '- '* '/ (symbol "^") '= '<> '< '<= '> '>= 'AND 'OR
     }
     x
   )
