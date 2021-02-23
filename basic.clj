@@ -54,9 +54,7 @@
 ;                     FUNCIONES AUXILIARES                     ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn abs [n]
-  (max n (- n))
-)
+(declare extraer-valores-de-data)
 
 (defn parentesis? [token]
   (contains? #{(symbol "(") (symbol ")")} token)
@@ -614,17 +612,18 @@
                   (if (nil? resu)
                       [nil amb]
                       [:sin-errores resu]))
-        CLEAR [:sin-errores (assoc amb 6 {})]
         LIST (do (print (amb 0)) [:sin-errores amb])
-        END [:omitir-restante (assoc amb 1 [:ejecucion_inmediata 0])]
+        
 
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;                            IMPLEMENTAR                             ;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;      
+        ;                             COMPARAR                               ;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
         
-        DATA [:omitir-restante amb]
-        READ [:omitir-restante amb]
-        RESTORE [:omitir-restante amb]
+        CLEAR [:sin-errores (assoc amb 6 {})]
+        END [:omitir-restante (assoc amb 1 [:ejecucion_inmediata 0])]
+        DATA [:sin-errores (assoc amb 4 (vec (concat (amb 4) (extraer-valores-de-data (next sentencia)))))]
+        READ (leer-data (next sentencia) amb)
+        RESTORE [:sin-errores (assoc amb 5 0)]
         
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
