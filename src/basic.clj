@@ -613,19 +613,20 @@
                       [nil amb]
                       [:sin-errores resu]))
         LIST (do (print (amb 0)) [:sin-errores amb])
-        
-
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;                             COMPARAR                               ;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
-        
         CLEAR [:sin-errores (assoc amb 6 {})]
-        END [:omitir-restante (assoc amb 1 [:ejecucion_inmediata 0])]
-        DATA [:sin-errores (assoc amb 4 (vec (concat (amb 4) (extraer-valores-de-data (next sentencia)))))]
-        READ (leer-data (next sentencia) amb)
         RESTORE [:sin-errores (assoc amb 5 0)]
-        
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        READ (leer-data (next sentencia) amb)
+
+        ;; No estoy seguro si hay que mantener la data cargada o no.
+        ;; Mantiene todo (data, variables, etc):
+        ;; END [:omitir-restante (assoc amb 1 [:ejecucion_inmediata 0])]
+        ;; Sólo deja cargado el programa en el ambiente:
+        END [:omitir-restante [(amb 0) [:ejecucion_inmediata 0] [] [] [] 0 {}]]
+  
+        ;; NO tiene sentido usar DATA en modo interactivo, pues no podemos hacer READ
+        DATA (do (dar-error 15 (amb 1)) [nil amb])
+        ;; Si quisieramos poder hacerlo:
+        ;; DATA [:sin-errores (assoc amb 4 (vec (concat (amb 4) (extraer-valores-de-data (next sentencia)))))];
 
         (if (= (second sentencia) '=)
             (let [resu (ejecutar-asignacion sentencia amb)]
