@@ -46,7 +46,7 @@
 (declare preprocesar-expresion)           ; DONE
 (declare desambiguar)                     ; DONE
 (declare precedencia)                     ; DONE
-(declare aridad)                          ; IMPLEMENTAR
+(declare aridad)                          ; DONE
 (declare eliminar-cero-decimal)           ; DONE
 (declare eliminar-cero-entero)            ; DONE
 
@@ -711,7 +711,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn operador? [x]
   (contains?
-    #{'+ '- '* '/ (symbol "^") '= '<> '< '<= '> '>= 'AND 'OR}
+    #{
+      'ATN 'INT 'SIN 'LEN 'MID$ 'MID3$ 'ASC 'CHR$ 'STR$
+      '+ '- '* '/ (symbol "^") '= '<> '< '<= '> '>= 'AND 'OR
+    }
     x
   )
 )
@@ -1121,7 +1124,39 @@
 ; user=> (aridad 'MID3$)
 ; 3
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn aridad [token]
+  (if (not (operador? token))
+    0
+    ({
+      ;; Funciones
+      'ATN          1
+      'INT          1
+      'SIN          1
+      'LEN          1
+      'MID$         2
+      'MID3$        3
+      'ASC          1
+      'CHR$         1
+      'STR$         1
+
+      ;; Operadores
+      '+            2
+      '-u           1
+      '-            2
+      '*            2
+      '/            2
+      (symbol "^")  2
+      '=            2
+      '<>           2
+      '<            2
+      '<=           2
+      '>            2
+      '>=           2
+      'AND          2
+      'OR           2
+    } token)
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

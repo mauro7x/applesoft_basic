@@ -44,6 +44,10 @@
    (is (= true (operador? '>=)))
    (is (= true (operador? 'AND)))
    (is (= true (operador? 'OR)))
+   (is (= true (operador? 'INT)))
+   (is (= true (operador? 'SIN)))
+   (is (= true (operador? 'MID3$)))
+   (is (= true (operador? 'STR$)))
    
    ;; No son operadores
    (is (= false (operador? (symbol "%"))))
@@ -265,34 +269,6 @@
    ))
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;                       TESTS IN PROGRESS                        ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Esperando por correlativas...
-(deftest test-ejecutar-asignacion
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
-   ;; ))
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
-   ;; ))
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 3}] 
-   ;; ))
-   ;; (is (=
-   ;;    (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
-   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X$ "HOLA MUNDO"}] 
-   ;; ))
-)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;                        REMAINING TESTS                         ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (deftest test-precedencia
    (is (= (precedencia (symbol ",")) 0))
    (is (= (precedencia 'OR) 1))
@@ -322,11 +298,11 @@
 )
 
 (deftest test-aridad
-   ;; (is (= (aridad 'THEN) 0))
-   ;; (is (= (aridad 'SIN) 1))
-   ;; (is (= (aridad '*) 2))
-   ;; (is (= (aridad 'MID$) 2))
-   ;; (is (= (aridad 'MID3$) 3))
+   (is (= (aridad 'THEN) 0))
+   (is (= (aridad 'SIN) 1))
+   (is (= (aridad '*) 2))
+   (is (= (aridad 'MID$) 2))
+   (is (= (aridad 'MID3$) 3))
 )
 
 (deftest test-eliminar-cero-decimal
@@ -347,6 +323,30 @@
    (is (= (eliminar-cero-entero -1.5) "-1.5"))
    (is (= (eliminar-cero-entero 0.5) ".5"))
    (is (= (eliminar-cero-entero -0.5) "-.5"))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                       TESTS IN PROGRESS                        ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Esperando por correlativas...
+(deftest test-ejecutar-asignacion
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
+   ;; ))
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 5}]
+   ;; ))
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X 3}] 
+   ;; ))
+   ;; (is (=
+   ;;    (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+   ;;    ['((10 (PRINT X))) [10 1] [] [] [] 0 {'X$ "HOLA MUNDO"}] 
+   ;; ))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
