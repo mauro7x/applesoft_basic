@@ -617,7 +617,10 @@
         READ [:omitir-restante amb]
         RESTORE [:omitir-restante amb]
         CLEAR [:omitir-restante amb]
-        LET [:omitir-restante amb]
+        LET (let [resu (ejecutar-asignacion (rest sentencia) amb)]
+                 (if (nil? resu)
+                     [nil amb]
+                     [:sin-errores resu]))
         LIST [:omitir-restante amb]
         END [:omitir-restante amb]
 
@@ -870,13 +873,17 @@
 ; user=> (variable-float? 'X$)
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn variable-valida? [x]
+  (not (or (palabra-reservada? x) (not (symbol? x)) (contains? #{(symbol "(") (symbol ")")} x)))
+)
+
 (defn variable-float? [x]
-  (if (or (palabra-reservada? x) (not (symbol? x)))
-    false
+  (if (variable-valida? x)
     (not (or
       (= (symbol (str (last (str x)))) '%)
       (= (symbol (str (last (str x)))) '$)
     ))
+    false
   )
 )
 
@@ -891,9 +898,9 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-integer? [x]
-  (if (or (palabra-reservada? x) (not (symbol? x)))
-    false
+  (if (variable-valida? x)
     (= (symbol (str (last (str x)))) '%)
+    false
   )
 )
 
@@ -908,9 +915,9 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-string? [x]
-  (if (or (palabra-reservada? x) (not (symbol? x)))
-    false
+  (if (variable-valida? x)
     (= (symbol (str (last (str x)))) '$)
+    false
   )
 )
 
