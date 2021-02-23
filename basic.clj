@@ -643,7 +643,7 @@
         (case operador
           -u (- operando)
           LEN (count operando)
-          ATN (Math/atn operando)
+          ATN (Math/atan operando)
           INT (int operando)
           SIN (Math/sin operando)
           ASC (int (.charAt (str (first operando)) 0))
